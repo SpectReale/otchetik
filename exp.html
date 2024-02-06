@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продажи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #333; /* Цвет фона */
+            color: #fff; /* Цвет текста */
+        }
+        button {
+            padding: 25px;
+            margin: 5px;
+            background-color: #555; /* Цвет фона кнопки */
+            color: #fff; /* Цвет текста кнопки */
+            border: none; /* Убираем границу кнопки */
+            cursor: pointer;
+		
+        }
+        .saleItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+        .deleteButton {
+            background-color: #ff6666;
+            color: #fff;
+            border: 1px solid #ff3333;
+            padding: 3px 6px;
+            cursor: pointer;
+        }
+        input {
+            background-color: #555; /* Цвет фона текстового поля */
+            color: #fff; /* Цвет текста в текстовом поле */
+            border: 1px solid #666; /* Обводка текстового поля */
+            padding: 5px;
+            margin: 2px;
+        }
+		#salesReport li {
+            margin: 2px 0; /* Уменьшаем верхний и нижний отступ между строками */
+        }
+		
+    </style>
+</head>
+<body>
+
+<h1>Система учета продаж</h1>
+
+<div>
+    <h2>Выберите товар</h2>
+    <button onclick="addSale('13500 вб', 285)">13500 вб </button>
+    <button onclick="addSale('5000 вб', 250)">5000 вб </button>
+    <button onclick="addSale('2800 вб', 205)">2800 вб </button>
+    <button onclick="addSale('1000 вб', 110)">1000 вб </button>
+    <button onclick="addSale('Отряд', 125)">Отряд </button>
+	<button onclick="addSale('Стартер', 53)">Стартер </button>
+    <button onclick="addSale('Цен агент', 122)">Цен агент </button>
+    <button onclick="addSale('Мят развед', 135)">Мят развед </button>
+</div>
+
+<div>
+    <h2>Подарок</h2>
+    <label for="customProductName">Кол-во вб:</label>
+    <input type="text" id="customProductName" placeholder="Введите число">
+    <button onclick="addCustomSale()">Добавить</button>
+</div>
+
+<div>
+    <h2>Общая сумма продаж:</h2>
+    <p id="totalSales">0</p>
+</div>
+
+<div>
+    <h2>Отчет за сессию:</h2>
+    <ul id="salesReport"></ul>
+</div>
+
+<script>
+    // Общая сумма продаж
+    let totalSales = 0;
+
+    // Функция для добавления продажи и обновления общей суммы
+    function addSale(product, price) {
+        const currentTime = new Date().toLocaleTimeString();
+        totalSales += price;
+
+        // Обновление общей суммы продаж
+        document.getElementById('totalSales').innerText = totalSales;
+
+        // Добавление отчета о продаже
+        const salesReport = document.getElementById('salesReport');
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <div class="saleItem">
+                <span>${product} - $${price}(продано в ${currentTime})</span>
+                <button class="deleteButton" onclick="removeSaleItem(this)">Удалить</button>
+            </div>
+        `;
+        salesReport.appendChild(listItem);
+
+        // Всплывающее уведомление о продаже
+        alert(`Продан товар: ${product}`);
+    }
+
+    // Функция для добавления пользовательского товара
+    function addCustomSale() {
+        const customProductName = document.getElementById('customProductName').value;
+        if (customProductName === "") {
+            alert("Введите название товара (число)!");
+            return;
+        }
+
+        const customProductPrice = parseFloat(customProductName) * 0.08;
+        addSale(`Подарок (${customProductName})`, customProductPrice);
+
+        // Очистка поля ввода
+        document.getElementById('customProductName').value = "";
+    }
+
+    // Функция для удаления выбранной позиции
+    function removeSaleItem(buttonElement) {
+        const listItem = buttonElement.parentNode;
+        const priceString = listItem.querySelector('span').innerText.match(/\$([0-9.]+)/);
+        if (priceString) {
+            const price = parseFloat(priceString[1]);
+            totalSales -= price;
+
+            // Обновление общей суммы продаж
+            document.getElementById('totalSales').innerText = totalSales;
+        }
+
+        // Удаление элемента из списка
+        listItem.remove();
+    }
+</script>
+
+</body>
+</html>
+
